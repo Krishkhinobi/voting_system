@@ -27,6 +27,7 @@ const AdminPanel = () => {
   const [votes, setVotes] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Fetch students and votes from Firebase
   useEffect(() => {
     const studentsRef = firebase.database().ref('students');
     studentsRef.once('value', (snapshot) => {
@@ -46,7 +47,7 @@ const AdminPanel = () => {
         positionSnapshot.forEach((voteSnapshot) => {
           const vote = voteSnapshot.val();
           if (positionVotes[vote.candidateName]) {
-            positionVotes[vote.candidateName] += 1;
+            positionVotes[vote.candidateName] += 1; // Increment vote count
           } else {
             positionVotes[vote.candidateName] = 1;
           }
@@ -63,7 +64,7 @@ const AdminPanel = () => {
   }
 
   const renderPositionVotes = (position) => {
-    const candidates = Object.keys(votes[position]);
+    const candidates = Object.keys(votes[position] || {});
     const voteCounts = candidates.map((candidate) => votes[position][candidate]);
 
     const data = {

@@ -1,226 +1,216 @@
-  import React, { useState } from 'react';
-  import firebase from 'firebase/compat/app';
-  import 'firebase/compat/database';
-  import { motion, AnimatePresence } from 'framer-motion';
-  import Registration from './Register';
-  import Login from './Login';
-  import Voting from './Voting';
-  import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import { motion, AnimatePresence } from 'framer-motion';
+import Registration from './Register';
+import Login from './Login';
+import Voting from './Voting';
+import { Link } from 'react-router-dom';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCZYIotsVJ9FAVyfrSRGHutnVX_4RLFojs",
-    authDomain: "votingsystem-e0571.firebaseapp.com",
-    databaseURL: "https://votingsystem-e0571-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "votingsystem-e0571",
-    storageBucket: "votingsystem-e0571.appspot.com",
-    messagingSenderId: "243212177617",
-    appId: "1:243212177617:web:caee6c0741bfbdf38135f0",
-    measurementId: "G-4LZNWDSM6F"
+const firebaseConfig = {
+  apiKey: "AIzaSyCZYIotsVJ9FAVyfrSRGHutnVX_4RLFojs",
+  authDomain: "votingsystem-e0571.firebaseapp.com",
+  databaseURL: "https://votingsystem-e0571-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "votingsystem-e0571",
+  storageBucket: "votingsystem-e0571.appspot.com",
+  messagingSenderId: "243212177617",
+  appId: "1:243212177617:web:caee6c0741bfbdf38135f0",
+  measurementId: "G-4LZNWDSM6F",
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app();
+}
+
+const VotingSystem = () => {
+  const [isRegister, setIsRegister] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
+  const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
+
+  const [studentData, setStudentData] = useState({
+    studentName: '',
+    studentGrade: '',
+    studentSection: '',
+    studentId: '',
+    loginStudentId: '',
+  });
+
+  const positions = [
+    'President',
+    'Vice President',
+    'Secretary',
+    'Treasurer',
+    'Auditor',
+    'Business Manager',
+    'PRO-Internal',
+    'PRO-External',
+  ];
+
+  const candidatesData = {
+    President: [
+      { id: 1, name: 'Gab riel Nash Niere', advocacy: 'Improving Education' },
+      { id: 2, name: 'Prince Charlean Tapere', advocacy: 'Promoting Equality' },
+      { id: 3, name: 'Jerico Lopez', advocacy: 'Sustainability First' },
+    ],
+    'Vice President': [
+      { id: 1, name: 'Prince Estrada', advocacy: 'Community Engagement' },
+      { id: 2, name: 'Adrian Aclon Escodero', advocacy: 'Youth Development' },
+      { id: 3, name: 'Claude Jillian Deiparine', advocacy: 'Inclusive Growth' },
+    ],
+    Secretary: [
+      { id: 1, name: 'Christaire Jay Jadraque', advocacy: 'Transparency in Governance' },
+      { id: 2, name: 'Sean Manuel Velez', advocacy: 'Strengthening Communication' },
+      { id: 3, name: 'Ed Ivan Repalam', advocacy: 'Organizational Efficiency' },
+    ],
+    Treasurer: [
+      { id: 1, name: 'Shan Angelo Lopez', advocacy: 'Financial Transparency' },
+      { id: 2, name: 'Macmac Matuguina', advocacy: 'Budget Optimization' },
+      { id: 3, name: 'Kiel Bacaday', advocacy: 'Effective Fundraising' },
+    ],
+    Auditor: [
+      { id: 1, name: 'Allen Rolona', advocacy: 'Integrity and Accountability' },
+      { id: 2, name: 'Rey Mateus Juegos', advocacy: 'Accurate Auditing' },
+      { id: 3, name: 'Dastine Emerson Hinacay', advocacy: 'Monitoring Resources' },
+    ],
+    'Business Manager': [
+      { id: 1, name: 'Rhovic James Labra', advocacy: 'Innovative Business Solutions' },
+      { id: 2, name: 'Kobe Salaver', advocacy: 'Resource Management' },
+      { id: 3, name: 'Elmer Jedan Albarado', advocacy: 'Entrepreneurial Growth' },
+    ],
+    'PRO-Internal': [
+      { id: 1, name: 'Joseph Lauron', advocacy: 'Enhancing Internal Communication' },
+      { id: 2, name: 'Zack Galao', advocacy: 'Improving Relations' },
+      { id: 3, name: 'Dustin Jay Datuharon', advocacy: 'Transparent Messaging' },
+    ],
+    'PRO-External': [
+      { id: 1, name: 'Nico Noquin', advocacy: 'Strengthening Partnerships' },
+      { id: 2, name: 'Jericho Semblante', advocacy: 'Community Outreach' },
+      { id: 3, name: 'Krish Khinobi Bayalan', advocacy: 'Promoting Engagement' },
+    ],
   };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  } else {
-    firebase.app();
-  }
-
-  const VotingSystem = () => {
-    const [isRegister, setIsRegister] = useState(true);
-    const [isLogin, setIsLogin] = useState(false);
-    const [isVoting, setIsVoting] = useState(false);
-
-    const [studentData, setStudentData] = useState({
-      studentName: '',
-      studentGrade: '',
-      studentSection: '',
-      studentId: '',
-      loginStudentId: '',
+  const handleRegister = (newUser) => {
+    firebase.database().ref('students').push({
+      studentId: newUser.studentId,
+      studentName: newUser.studentName,
+      studentGrade: newUser.studentGrade,
+      studentSection: newUser.studentSection,
     });
-
-    const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
-    const positions = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Auditor', 'Business Manager', 'PRO-Internal', 'PRO-External'];
-    const candidates = ['Candidate 1', 'Candidate 2', 'Candidate 3']; // Modify these dynamically based on your Firebase data
-
-    const handleRegister = (newUser) => {
-      firebase.database().ref('students').push({
-        studentId: newUser.studentId,
-        studentName: newUser.studentName,
-        studentGrade: newUser.studentGrade,
-        studentSection: newUser.studentSection,
-      });
-      alert('Student Registered');
-      setIsRegister(false);
-      setIsLogin(true);
-    };
-
-    const handleLogin = (loginId) => {
-      const userRef = firebase.database().ref('students');
-      userRef.once('value', (snapshot) => {
-        let found = false;
-        snapshot.forEach((childSnapshot) => {
-          if (childSnapshot.val().studentId === loginId) {
-            found = true;
-            setStudentData(childSnapshot.val()); // Store student data
-          }
-        });
-        if (found) {
-          alert('Login Successful');
-          setIsRegister(false);
-          setIsLogin(false);
-          setIsVoting(true);
-        } else {
-          alert('Student ID not found');
-        }
-      });
-    };
-
-    const handleVote = (selectedCandidate) => {
-      const position = positions[currentPositionIndex];
-      const studentInfo = studentData;
-
-      const voteData = {
-        candidateName: selectedCandidate,
-        studentInfo: {
-          name: studentInfo.studentName,
-          grade: studentInfo.studentGrade,
-          section: studentInfo.studentSection,
-        },
-        timestamp: firebase.database.ServerValue.TIMESTAMP,
-      };
-
-      // Check if the user has already voted for this position
-      const userVoteRef = firebase.database().ref(`userVotes/${studentData.studentId}`);
-      userVoteRef.once('value', (snapshot) => {
-        if (snapshot.exists() && snapshot.val()[position]) {
-          // User has already voted for this position
-          alert('You have already voted for this position.');
-          return;
-        }
-
-        // Save the vote under the specific position
-        firebase.database().ref(`votes/${position}`).push(voteData);
-        console.log(`Voted for ${selectedCandidate} as ${position}`);
-
-        // Mark this position as voted
-        userVoteRef.update({ [position]: true });
-
-        if (currentPositionIndex < positions.length - 1) {
-          setCurrentPositionIndex(currentPositionIndex + 1); // Move to the next position
-        } else {
-          alert('Voting Complete');
-          setIsVoting(false); // End the voting process
-        }
-      });
-    };
-
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-      >
-        <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
-          <motion.div
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Student Voting System
-            </h2>
-            <Link 
-              to='/admin' 
-              className="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 ease-in-out"
-            >
-              Admin
-            </Link>
-          </motion.div>
-
-          <AnimatePresence mode="wait">
-            {isRegister && (
-              <motion.div
-                key="register"
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              >
-                <Registration
-                  studentData={studentData}
-                  setStudentData={setStudentData}
-                  onRegister={handleRegister}
-                  switchToLogin={() => {
-                    setIsRegister(false);
-                    setIsLogin(true);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {isLogin && (
-              <motion.div
-                key="login"
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              >
-                <Login
-                  loginStudentId={studentData.loginStudentId}
-                  setStudentData={setStudentData}
-                  onLogin={handleLogin}
-                />
-              </motion.div>
-            )}
-
-            {isVoting && (
-              <motion.div
-                key="voting"
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              >
-                <Voting
-                  position={positions[currentPositionIndex]}
-                  candidates={candidates}
-                  onVote={handleVote}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Hide Register and Login buttons during Voting */}
-          {!isVoting && (
-            <div className="mt-6 flex justify-center space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => {
-                  setIsRegister(true);
-                  setIsLogin(false);
-                }}
-              >
-                Register
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                onClick={() => {
-                  setIsRegister(false);
-                  setIsLogin(true);
-                }}
-              >
-                Login
-              </motion.button>
-            </div>
-          )}
-        </div>
-      </motion.div>
-    );
+    alert('Student Registered');
+    setIsRegister(false);
+    setIsLogin(true);
   };
 
-  export default VotingSystem;
+  const handleLogin = (loginId) => {
+    const userRef = firebase.database().ref('students');
+    userRef.once('value', (snapshot) => {
+      let found = false;
+      snapshot.forEach((childSnapshot) => {
+        if (childSnapshot.val().studentId === loginId) {
+          found = true;
+          setStudentData(childSnapshot.val());
+        }
+      });
+      if (found) {
+        alert('Login Successful');
+        setIsRegister(false);
+        setIsLogin(false);
+        setIsVoting(true);
+      } else {
+        alert('Student ID not found');
+      }
+    });
+  };
+
+  const handleVote = (selectedCandidate) => {
+    const position = positions[currentPositionIndex];
+    const studentInfo = studentData;
+
+    const voteData = {
+      candidateName: selectedCandidate.name,
+      advocacy: selectedCandidate.advocacy,
+      studentInfo: {
+        name: studentInfo.studentName,
+        grade: studentInfo.studentGrade,
+        section: studentInfo.studentSection,
+      },
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+    };
+
+    const userVoteRef = firebase.database().ref(`userVotes/${studentData.studentId}`);
+    userVoteRef.once('value', (snapshot) => {
+      if (snapshot.exists() && snapshot.val()[position]) {
+        alert('You have already voted for this position.');
+        return;
+      }
+
+      firebase.database().ref(`votes/${position}`).push(voteData);
+      console.log(`Voted for ${selectedCandidate.name} as ${position}`);
+
+      userVoteRef.update({ [position]: true });
+
+      if (currentPositionIndex < positions.length - 1) {
+        setCurrentPositionIndex(currentPositionIndex + 1);
+      } else {
+        alert('Voting Complete');
+        setIsVoting(false);
+      }
+    });
+  };
+
+  const currentCandidates = candidatesData[positions[currentPositionIndex]] || [];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center py-12 px-20 sm:px-6 lg:px-8"
+    >
+      <div className="max-w-md w-[500px] space-y-5  bg-white p-3 rounded-xl shadow-2xl">
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Student Voting System</h2>
+        </motion.div>
+
+        <AnimatePresence mode="wait">
+          {isRegister && (
+            <Registration
+              studentData={studentData}
+              setStudentData={setStudentData}
+              onRegister={handleRegister}
+              switchToLogin={() => {
+                setIsRegister(false);
+                setIsLogin(true);
+              }}
+            />
+          )}
+
+          {isLogin && (
+            <Login
+              loginStudentId={studentData.loginStudentId}
+              setStudentData={setStudentData}
+              onLogin={handleLogin}
+            />
+          )}
+
+          {isVoting && (
+            <Voting
+              position={positions[currentPositionIndex]}
+              candidates={currentCandidates}
+              onVote={handleVote}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+};
+
+export default VotingSystem;

@@ -22,7 +22,7 @@ function Footer() {
           </div>
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-            <p className="mb-2">Email: info@studentcouncil.edu</p>
+            <p className="mb-2">Email: KrishKinobebayalan321@gmail.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
         </div>
