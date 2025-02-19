@@ -25,8 +25,8 @@ if (!firebase.apps.length) {
 }
 
 const VotingSystem = () => {
-  const [isRegister, setIsRegister] = useState(true);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [isVoting, setIsVoting] = useState(false);
   const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
 
@@ -91,6 +91,12 @@ const VotingSystem = () => {
       { id: 3, name: 'Krish Khinobi Bayalan', advocacy: 'Promoting Engagement' },
     ],
   };
+
+  const switchToRegister = () => {
+    setIsRegister(true);
+    setIsLogin(false);
+  };
+  
 
   const handleRegister = (newUser) => {
     firebase.database().ref('students').push({
@@ -197,6 +203,10 @@ const VotingSystem = () => {
               loginStudentId={studentData.loginStudentId}
               setStudentData={setStudentData}
               onLogin={handleLogin}
+              switchToRegister={() => {
+                setIsLogin(false);
+                setIsRegister(true);
+              }}
             />
           )}
 

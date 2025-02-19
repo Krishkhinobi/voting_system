@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const Login = ({ loginStudentId, setStudentData, onLogin }) => {
+const Login = ({ loginStudentId, setStudentData, onLogin, switchToRegister }) => {
   const handleChange = (e) => {
     setStudentData((prev) => ({ ...prev, loginStudentId: e.target.value }));
   };
@@ -58,7 +58,7 @@ const Login = ({ loginStudentId, setStudentData, onLogin }) => {
       >
         Don't have an account?{' '}
         <button
-          onClick={() => {/* Add your switchToRegister function here */}}
+          onClick={switchToRegister}
           className="font-medium text-indigo-600 hover:text-indigo-500 transition duration-300"
         >
           Register here

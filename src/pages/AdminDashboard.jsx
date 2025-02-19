@@ -1,7 +1,10 @@
+// FILEPATH: d:/student-voting_system/front-end/src/pages/AdminDashboard.jsx
+
 import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import { Bar } from 'react-chartjs-2';
+import { motion } from 'framer-motion';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,6 +24,57 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const LoadingAnimation = () => {
+  const containerVariants = {
+    start: {
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+    end: {
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const circleVariants = {
+    start: {
+      y: '0%',
+    },
+    end: {
+      y: '100%',
+    },
+  };
+
+  const circleTransition = {
+    duration: 0.5,
+    yoyo: Infinity,
+    ease: 'easeInOut',
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
+      <motion.div
+        className="flex space-x-2"
+        variants={containerVariants}
+        initial="start"
+        animate="end"
+      >
+        {[0, 1, 2].map((index) => (
+          <motion.span
+            key={index}
+            className="w-4 h-4 bg-blue-600 rounded-full"
+            variants={circleVariants}
+            transition={circleTransition}
+          />
+        ))}
+      </motion.div>
+      <p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+    </div>
+  );
+};
 
 const AdminPanel = () => {
   const [students, setStudents] = useState([]);
@@ -60,7 +114,7 @@ const AdminPanel = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingAnimation />;
   }
 
   const renderPositionVotes = (position) => {

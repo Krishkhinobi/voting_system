@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+    <section className="bg-gradient-to-r from-red-800 to-red-900 text-white">
       <div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 lg:pr-12">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
@@ -18,6 +18,9 @@ const Hero = () => {
             </button>
             <button className="bg-transparent border-2 border-white font-semibold py-3 px-6 rounded-lg hover:bg-white hover:text-indigo-600 transition duration-300 ease-in-out">
               Learn More
+            </button>
+            <button className="bg-yellow-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 ease-in-out">
+              <Link to="/admin-login">Admin</Link>
             </button>
           </div>
         </div>
