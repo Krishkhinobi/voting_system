@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const user = 'admin';
   const pass = 'admin';
 
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
-  
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Implement login logic here
     console.log('Login attempt with:', username, password);
     if (username === user && password === pass) {
-      // TODO: Redirect to admin dashboard
       alert('Login Successful');
-      window.location.href = '/admin';
-       
+      navigate('/admin'); // Redirect to admin dashboard
+    } else {
+      alert('Invalid Username or Password');
     }
   };
 
